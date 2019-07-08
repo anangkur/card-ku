@@ -4,6 +4,7 @@ import 'model/card.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'model/response.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(MyApp());
 
@@ -45,8 +46,47 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          PopupMenuButton<int>(
+            itemBuilder: (context) => [
+              PopupMenuItem<int>(
+                child: Text('Keluar'),
+                value: 1,
+              )
+            ],
+            onSelected: (value){
+              _showDialog();
+            },
+          )
+        ],
       ),
       body: _GridView(data: fetchCard(),),
+    );
+  }
+
+  void _showDialog(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context){
+        return AlertDialog(
+          title: Text('Perhatian'),
+          content: Text('Apakah anda yakin ingin keluar?'),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: (){
+                SystemNavigator.pop();
+              },
+              child: Text('Ya')
+            ),
+            FlatButton(
+              onPressed: (){
+                Navigator.pop(context);
+              },
+              child: Text('Tidak')
+            )
+          ],
+        );
+      }
     );
   }
 }
@@ -58,24 +98,22 @@ class _GridView extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemBuilder: (context, index){
-        return FutureBuilder<Response> (
-          future: data,
-          builder: (context, snapshot){
-            if(!snapshot.hasData){
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }else if(snapshot.hasError){
-              return Text("${snapshot.error}");
-            }else{
-              return _CardItemView(data: YugiohCard.fromJsonMap(snapshot.data.data[index]),);
-            }
-          },
-        );
-      }
+    return FutureBuilder<Response> (
+      future: data,
+      builder: (context, snapshot){
+        if(!snapshot.hasData){
+          return LinearProgressIndicator();
+        }else if(snapshot.hasError){
+          return Text("${snapshot.error}");
+        }else{
+          return GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              itemBuilder: (context, index){
+                return _CardItemView(data: YugiohCard.fromJsonMap(snapshot.data.data[index]),);
+              }
+          );
+        }
+      },
     );
   }
 }
@@ -88,14 +126,14 @@ class _CardItemView extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: (){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DetailApp(data: data,)),
-        );
-      },
-      child: Card(
+    return Card(
+      child: InkWell(
+        onTap: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DetailApp(data: data,)),
+          );
+        },
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -120,7 +158,7 @@ class _CardItemView extends StatelessWidget{
             ],
           ),
         ),
-      ),
+      )
     );
   }
 }
