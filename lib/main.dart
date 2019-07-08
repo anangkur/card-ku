@@ -5,11 +5,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'model/response.dart';
 import 'package:flutter/services.dart';
+import 'dart:io';
 
 void main() => runApp(MyApp());
 
 Future<Response> fetchCard() async{
-  final response = await http.get('https://db.ygoprodeck.com/api/v5/cardinfo.php');
+  final response = await http.get('https://db.ygoprodeck.com/api/v5/cardinfo.php?num=100');
   if(response.statusCode == 200){
     return Response.fromJsonMap(json.decode(response.body));
   }else{
@@ -74,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: <Widget>[
             FlatButton(
               onPressed: (){
-                SystemNavigator.pop();
+                exit(0);
               },
               child: Text('Ya')
             ),
@@ -110,7 +111,8 @@ class _GridView extends StatelessWidget{
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
               itemBuilder: (context, index){
                 return _CardItemView(data: YugiohCard.fromJsonMap(snapshot.data.data[index]),);
-              }
+              },
+            itemCount: snapshot.data.data.length,
           );
         }
       },

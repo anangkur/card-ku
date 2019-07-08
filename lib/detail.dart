@@ -65,7 +65,10 @@ class _DetailAppState extends State<DetailApp>{
           Container(
             margin: EdgeInsets.symmetric(vertical: 8),
           ),
-          Image.network(data.card_images[0].image_url),
+          Image.network(
+            data.card_images[0].image_url,
+            fit: BoxFit.fitWidth,
+          ),
         ],
       ),
     );
