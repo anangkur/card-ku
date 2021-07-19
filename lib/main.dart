@@ -4,13 +4,12 @@ import 'model/card.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'model/response.dart';
-import 'package:flutter/services.dart';
 import 'dart:io';
 
 void main() => runApp(MyApp());
 
 Future<Response> fetchCard() async{
-  final response = await http.get('https://db.ygoprodeck.com/api/v5/cardinfo.php?num=100');
+  final response = await http.get('https://db.ygoprodeck.com/api/v7/cardinfo.php?num=100&offset=100');
   if(response.statusCode == 200){
     return Response.fromJsonMap(json.decode(response.body));
   }else{

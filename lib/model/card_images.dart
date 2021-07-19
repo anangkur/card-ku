@@ -6,7 +6,7 @@ class Card_images {
   String image_url_small;
 
 	Card_images.fromJsonMap(Map<String, dynamic> map): 
-		id = map["id"],
+		id = map["id"].toString(),
 		image_url = map["image_url"],
 		image_url_small = map["image_url_small"];
 
