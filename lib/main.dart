@@ -102,18 +102,20 @@ class _GridView extends StatelessWidget{
     return FutureBuilder<Response> (
       future: data,
       builder: (context, snapshot){
-        if(!snapshot.hasData){
-          return LinearProgressIndicator();
-        }else if(snapshot.hasError){
-          return Text("${snapshot.error}");
-        }else{
-          return GridView.builder(
+        if(snapshot.connectionState == ConnectionState.done){
+          if(snapshot.hasError) {
+            return Text("${snapshot.error}");
+          } else {
+            return GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
               itemBuilder: (context, index){
                 return _CardItemView(data: YugiohCard.fromJsonMap(snapshot.data.data[index]),);
               },
-            itemCount: snapshot.data.data.length,
-          );
+              itemCount: snapshot.data.data.length,
+            );
+          }
+        }else{
+          return LinearProgressIndicator();
         }
       },
     );
